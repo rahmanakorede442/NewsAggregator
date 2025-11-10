@@ -151,6 +151,7 @@ Example endpoints:
 * `GET /api/preferences` → Get visitor preferences
 * `POST /api/preferences` → Save visitor preferences
 * `GET /api/sources` → Get available news sources
+* `GET /api/authors` → Get available news authors
 * `GET /api/categories` → Get available categories
 
 ---
