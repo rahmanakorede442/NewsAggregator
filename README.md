@@ -45,7 +45,6 @@ Request → VisitorMiddleware → Controller → PreferenceService → Response
 Key components:
 
 1. **Cookie Management:**
-        - 30-day persistent visitor cookies
         - Secure, HTTP-only configuration
         - Automatic ID generation for new visitors
 
@@ -95,7 +94,7 @@ Copy `.env.example` to `.env`:
 cp .env.example .env
 ```
 
-Then configure your database and cache settings:
+Then configure your database and credential settings:
 
 ```env
 DB_CONNECTION=mysql
@@ -134,7 +133,7 @@ php artisan db:seed
 ### 7. Run the aggregator manually
 
 ```bash
-php artisan news:aggregate
+php artisan schedule:work
 ```
 
 Or let it run automatically every 6 hours (already configured in `app/Console/Kernel.php`).
@@ -144,7 +143,7 @@ Or let it run automatically every 6 hours (already configured in `app/Console/Ke
 ## 🧾 API Documentation
 
 All endpoints are documented in Postman:
-👉 [View the Postman Documentation](https://documenter.getpostman.com/view/your-postman-doc-id)
+👉 [View the Postman Documentation](https://documenter.getpostman.com/view/22260651/2sB3WtqyEP)
 
 Example endpoints:
 
