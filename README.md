@@ -19,7 +19,6 @@ The system supports **filtering, search, and user preference–based recommendat
 - Supports **search** through multiple fields (title, content, category, source)
 - Handles **visitor-based preferences** (stored by unique visitor identifier)
 - Implements **SOLID principles** and **clean architecture**
-- Optimized with **caching** for repeated queries
 
 ---
 
