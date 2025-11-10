@@ -1,5 +1,4 @@
 
-````markdown
 # 📰 News Aggregator API
 
 A simple yet robust **News Aggregator Backend** built with **Laravel**, designed to fetch, store, and serve news articles from multiple external sources.  
@@ -12,10 +11,10 @@ The system supports **filtering, search, and user preference–based recommendat
 - Aggregates news from **three sources** ( NewsAPI, The Guardian, New York Times)
 - Updates news data every **6 hours** automatically via scheduled jobs
 - Filters news by:
-- Date
-  - **Source**
-  - **Category**
-  - **Author**
+    - Date
+    - **Source**
+    - **Category**
+    - **Author**
 - Supports **search** through multiple fields (title, content, category, source)
 - Handles **visitor-based preferences** (stored by unique visitor identifier)
 - Implements **SOLID principles** and **clean architecture**
@@ -46,20 +45,20 @@ Request → VisitorMiddleware → Controller → PreferenceService → Response
 Key components:
 
 1. **Cookie Management:**
-    - 30-day persistent visitor cookies
-    - Secure, HTTP-only configuration
-    - Automatic ID generation for new visitors
+        - 30-day persistent visitor cookies
+        - Secure, HTTP-only configuration
+        - Automatic ID generation for new visitors
 
 2. **Preference Storage:**
-    - Categories
-    - Sources
-    - Keywords
-    - Last visit timestamp
+        - Categories
+        - Sources
+        - Keywords
+        - Last visit timestamp
 
 3. **Request Enhancement:**
-    - Visitor ID injection
-    - Preference context merging
-    - Automatic preference application
+        - Visitor ID injection
+        - Preference context merging
+        - Automatic preference application
 
 ---
 
@@ -80,7 +79,7 @@ Key components:
 ```bash
 git clone https://github.com/rahmanakorede442/newsAggregator.git
 cd newsAggregator
-````
+```
 
 ### 2. Install dependencies
 
@@ -163,7 +162,7 @@ Example endpoints:
 GET /api/news?search=politics&date=2025-11-01&category=World&visitor_id=abc123
 ```
 
-Returns news articles matching the query and/or the visitor’s stored preferences.
+Returns news articles matching the query and/or the visitor's stored preferences.
 
 ---
 
