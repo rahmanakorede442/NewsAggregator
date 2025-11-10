@@ -1,395 +1,218 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Here’s a clean and professional **README.md** you can use for your news aggregator assessment project 👇
 
-```markdown
-
-# Laravel News Aggregator – Senior Backend Assignment
-
-A **production-grade**, **highly performant** Laravel backend that aggregates news articles from multiple sources, stores them locally, and exposes a **cached, filterable REST API** with user preferences.
-
-Built with **SOLID**, **SRP**, **DRY**, **KISS**, and **Redis caching** – exactly what a senior Laravel engineer delivers.
+You can edit the Postman link and repository name where needed.
 
 ---
 
-### Features
+````markdown
+# 📰 News Aggregator API
 
-- Fetches articles from **3+ live APIs** (NewsAPI, The Guardian, NYT)
-
-- **Hourly scheduled updates** via Laravel Scheduler
-
-- **Redis-powered caching** with tags & cache warming
-
-- **Zero cold-cache latency** on popular queries
-
-- Full-text search, date/category/source filtering
-
-- User preferences (sources, categories, authors)
-
-- RESTful JSON API with pagination
-
-- Sanctum token authentication
-
-- Clean architecture: Services, Query Builders, Cache layer
-
-- Ready for 50k+ RPM
+A simple yet robust **News Aggregator Backend** built with **Laravel**, designed to fetch, store, and serve news articles from multiple external sources.  
+The system supports **filtering, search, and user preference–based recommendations** — all without authentication.
 
 ---
 
-### Tech Stack
+## 🚀 Features
 
-| Layer              | Technology                          |
-
-|--------------------|-------------------------------------|
-
-| Framework          | Laravel 10+                         |
-
-| Language           | PHP 8.2+                            |
-
-| Cache / Queue      | Redis (Predis)                      |
-
-| Database           | MySQL / PostgreSQL                  |
-
-| Auth               | Laravel Sanctum                     |
-
-| Scheduler          | Laravel Task Scheduling             |
-
-| HTTP Client        | Laravel `Http` facade               |
-
-| Container          | Docker (optional)                   |
+- Aggregates news from **three sources** ( NewsAPI, The Guardian, New York Times)
+- Updates news data every **6 hours** automatically via scheduled jobs
+- Filters news by:
+  - **Date**
+  - **Source**
+  - **Category**
+  - **Author**
+- Supports **search** through multiple fields (title, content, category, source)
+- Handles **visitor-based preferences** (stored by unique visitor identifier)
+- Implements **SOLID principles** and **clean architecture**
+- Optimized with **caching** for repeated queries
 
 ---
 
-### Project Structure (Key Files)
+## 🧠 System Design Overview
 
+The project is divided into cleanly separated layers:
+
+- **Services:** Each news source implements a `NewsServiceInterface` and defines a `fetch()` method.
+- **Aggregator:** The `NewsAggregatorService` class aggregates from all service providers and persists new data.
+- **Scheduler:** A Laravel cron job runs every 6 hours to pull and store new articles.
+
+### Visitor Preferences & Middleware
+
+The system handles visitor tracking and preferences through:
+
+- **VisitorMiddleware:** Creates and manages unique visitor IDs via cookies
+- **PreferenceService:** Stores and retrieves visitor preferences
+- **Request Merging:** Automatically injects visitor context into all requests
+
+```php
+// Simplified flow:
+Request → VisitorMiddleware → Controller → PreferenceService → Response
 ```
 
-app/
+Key components:
 
-├── Console/Commands/FetchArticles.php
+1. **Cookie Management:**
+    - 30-day persistent visitor cookies
+    - Secure, HTTP-only configuration
+    - Automatic ID generation for new visitors
 
-├── Http/Controllers/ArticleController.php
+2. **Preference Storage:**
+    - Categories
+    - Sources
+    - Keywords
+    - Last visit timestamp
 
-├── Models/Article.php
-
-├── Services/
-
-│   ├── ArticleAggregator.php
-
-│   ├── NewsApiService.php
-
-│   └── ArticleCache.php
-
-├── QueryBuilders/ArticleQuery.php
-
-database/migrations/
-
-├── create_articles_table.php
-
-├── create_sources_table.php
-
-routes/api.php
-
-app/Console/Kernel.php
-
-```
+3. **Request Enhancement:**
+    - Visitor ID injection
+    - Preference context merging
+    - Automatic preference application
 
 ---
 
-### Setup Instructions
+## 🏗️ Tech Stack
 
-#### 1. Clone & Install
+- **Backend:** Laravel 12
+- **Database:** MySQL
+- **Cache:** Redis (optional)
+- **HTTP Client:** Laravel HTTP client for API consumption
+- **Scheduler/Queue:** Laravel Scheduler (for periodic updates)
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone the repository
 
 ```bash
+git clone https://github.com/rahmanakorede442/newsAggregator.git
+cd newsAggregator
+````
 
-git clone <your-repo>
+### 2. Install dependencies
 
-cd news-aggregator
-
+```bash
 composer install
-
-cp .env.example .env
-
-php artisan key:generate
-
 ```
 
-#### 2. Configure `.env`
+### 3. Set up environment variables
+
+Copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Then configure your database and cache settings:
 
 ```env
-
-APP_NAME="News Aggregator"
-
-APP_ENV=local
-
-APP_KEY=
-
-APP_DEBUG=true
-
-APP_URL=http://localhost:8000
-
 DB_CONNECTION=mysql
-
 DB_HOST=127.0.0.1
-
 DB_PORT=3306
-
 DB_DATABASE=news_aggregator
-
 DB_USERNAME=root
-
 DB_PASSWORD=
 
+NEWS_API_KEY=
+NYT_API_KEY=
+GUARDIAN_API_KEY=
+
 CACHE_DRIVER=redis
-
-QUEUE_CONNECTION=redis
-
-REDIS_HOST=127.0.0.1
-
-REDIS_PASSWORD=null
-
-REDIS_PORT=6379
-
-# API Keys
-
-NEWSAPI_KEY=your_newsapi_key
-
-GUARDIAN_API_KEY=your_guardian_key
-
-NYT_API_KEY=your_nyt_key
-
+QUEUE_CONNECTION=database
 ```
 
-#### 3. Start Redis & Database
+### 4. Generate the application key
 
 ```bash
-
-# Using Docker
-
-docker run -d -p 6379:6379 --name redis redis:alpine
-
-docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=news_aggregator mysql:8
-
+php artisan key:generate
 ```
 
-#### 4. Run Migrations & Seed Sources
+### 5. Run migrations
 
 ```bash
-
 php artisan migrate
-
-php artisan db:seed --class=SourceSeeder
-
 ```
 
-#### 5. Fetch Articles (First Run)
+### 6. (Optional) Seed initial data
 
 ```bash
-
-php artisan articles:fetch
-
+php artisan db:seed
 ```
 
-#### 6. Schedule Updates (Crontab)
+### 7. Run the aggregator manually
 
 ```bash
-
-* * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
-
+php artisan news:aggregate
 ```
 
-#### 7. Start Server
+Or let it run automatically every 6 hours (already configured in `app/Console/Kernel.php`).
+
+---
+
+## 🧾 API Documentation
+
+All endpoints are documented in Postman:
+👉 [View the Postman Documentation](https://documenter.getpostman.com/view/your-postman-doc-id)
+
+Example endpoints:
+
+* `GET /api/news` → Fetch paginated and filtered news
+* `GET /api/preferences` → Get visitor preferences
+* `POST /api/preferences` → Save visitor preferences
+* `GET /api/sources` → Get available news sources
+* `GET /api/categories` → Get available categories
+
+---
+
+## 🧩 Example Query
 
 ```bash
+GET /api/news?search=politics&date=2025-11-01&category=World&visitor_id=abc123
+```
 
+Returns news articles matching the query and/or the visitor’s stored preferences.
+
+---
+
+## 🧰 Scheduler Setup (for periodic updates)
+
+Set up the Laravel scheduler on your server (e.g., in cron):
+
+```bash
+* */6 * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
+
+This ensures news is refreshed every 6 hours.
+
+---
+
+## 🧑‍💻 Development
+
+Run the local server:
+
+```bash
 php artisan serve
-
 ```
 
-API now available at `http://localhost:8000/api/articles`
+You can also use Laravel Sail or Docker if you prefer containerized development.
 
 ---
 
-### API Endpoints
+## 🧱 Project Architecture Highlights
 
-| Method | Endpoint                 | Auth   | Description |
-
-|--------|--------------------------|--------|-----------|
-
-| `GET`  | `/api/articles`          | Yes    | List articles with filters |
-
-| `GET`  | `/api/articles/{id}`     | Yes    | Single article (cached) |
-
-| `POST` | `/api/login`             | No     | Get Sanctum token |
-
-| `PATCH`| `/api/preferences`       | Yes    | Update user preferences |
-
-#### Query Parameters (`/api/articles`)
-
-```http
-
-GET /api/articles?
-
-  search=AI&
-
-  date_from=2025-01-01&
-
-  date_to=2025-11-06&
-
-  category_id=3&
-
-  source_id=1&
-
-  page=2
-
-```
-
-#### Example Response
-
-```json
-
-{
-
-  "data": [ { "id": 123, "title": "AI Breakthrough...", "source": { "name": "NYT" } } ],
-
-  "meta": {
-
-    "current_page": 2,
-
-    "total": 842,
-
-    "per_page": 20
-
-  }
-
-}
-
-```
+* **Interface Segregation:** Each news source service implements a shared `NewsServiceInterface`
+* **Dependency Inversion:** The `NewsAggregatorService` depends only on abstractions, not concrete implementations
+* **Single Responsibility:** Each service handles one source; aggregator handles merging and persistence
+* **Open/Closed Principle:** New sources can be added without modifying the aggregator
 
 ---
 
-### Caching Strategy
+## 🏁 Conclusion
 
-- **List queries**: Cached for **1 hour** with `articles-list` tag
-
-- **Single article**: Cached for **24 hours**
-
-- **Invalidated** on every `articles:fetch`
-
-- **Warm cache** for top 3 queries after fetch
-
-- **Zero downtime** – users never hit cold cache
-
-Check Redis:
-
-```bash
-
-redis-cli KEYS "*articles*"
-
-redis-cli TTL "articles:abc123"
-
-```
+This project demonstrates clean backend design, modularity, and maintainability while meeting performance and simplicity requirements for a small-scale, production-ready news aggregator.
 
 ---
 
-### Authentication (Sanctum)
-
-```bash
-
-# Register / Login
-
-curl -X POST http://localhost:8000/api/register \
-
-  -d "name=John&email=john@example.com&password=password"
-
-# Use token in header
-
-Authorization: Bearer 1|aBcDeFgHiJkLmNoPqRsTuVwXyZ...
-
-```
-
-Update preferences:
-
-```bash
-
-PATCH /api/preferences
-
-{
-
-  "sources": [1, 3],
-
-  "categories": [2],
-
-  "authors": ["Elon Musk"]
-
-}
-
-```
-
----
-
-### Running Tests
-
-```bash
-
-php artisan test
-
-```
-
-Includes:
-
-- Fetcher unit tests with HTTP faking
-
-- Cache service tests
-
-- API integration tests
-
----
-
-### Performance Benchmarks (Local)
-
-| Scenario                 | Response Time | DB Queries | Redis Hits |
-
-|--------------------------|---------------|------------|------------|
-
-| Cold cache (first load)  | ~180ms        | 1          | 0          |
-
-| Warm cache               | **12ms**      | 0          | 1          |
-
-| After `articles:fetch`   | **15ms**      | 0          | 1 (warmed) |
-
----
-
-### Production Ready?
-
-**Yes.** This codebase is:
-
-- Fully typed
-
-- Cache-optimized
-
-- Horizontally scalable
-
-- Queue-ready (move fetch to queue)
-
-- Rate-limit ready (`throttle:60,1`)
-
-- Logging + error handling ready
-
----
-
-### Author
-
-**Senior Laravel Backend Engineer**  
-
-Built with clean code, performance, and maintainability in mind.
-
-> "Good code is its own documentation. Great code ships fast and stays fast."
-
----
-
-### License
-
-MIT © 2025
-
-```
-
-```
+**Author:** Abdulmujeeb
+**Framework:** Laravel 11
+**Language:** PHP 8.3
+**License:** MIT
