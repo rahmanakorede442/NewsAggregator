@@ -1,8 +1,3 @@
-Here’s a clean and professional **README.md** you can use for your news aggregator assessment project 👇
-
-You can edit the Postman link and repository name where needed.
-
----
 
 ````markdown
 # 📰 News Aggregator API
@@ -17,7 +12,7 @@ The system supports **filtering, search, and user preference–based recommendat
 - Aggregates news from **three sources** ( NewsAPI, The Guardian, New York Times)
 - Updates news data every **6 hours** automatically via scheduled jobs
 - Filters news by:
-  - **Date**
+- Date
   - **Source**
   - **Category**
   - **Author**
@@ -213,6 +208,6 @@ This project demonstrates clean backend design, modularity, and maintainability 
 ---
 
 **Author:** Abdulmujeeb
-**Framework:** Laravel 11
+**Framework:** Laravel 12
 **Language:** PHP 8.3
 **License:** MIT
